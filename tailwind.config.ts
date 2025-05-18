@@ -63,26 +63,26 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Retro theme colors
+				// Cyberpunk theme colors
 				retro: {
-					background: '#234975',
+					background: '#1A1F2C',
 					foreground: '#ffffff',
-					primary: '#33ff00',
-					secondary: '#0088ff',
-					accent: '#ff8800',
-					muted: '#cccccc',
-					border: '#00aaff',
+					primary: '#8B5CF6',
+					secondary: '#0EA5E9',
+					accent: '#F97316',
+					muted: '#9ca3af',
+					border: '#8B5CF6',
 					shadow: '#000033',
 				}
 			},
 			fontFamily: {
-				pixelated: ['VT323', 'monospace'],
-				mono: ['Courier New', 'monospace'],
+				pixelated: ['Orbitron', 'sans-serif'],
+				mono: ['JetBrains Mono', 'monospace'],
 			},
 			boxShadow: {
-				'retro': '4px 4px 0px 0px rgba(0, 0, 0, 0.5)',
-				'retro-inset': 'inset 2px 2px 0px rgba(255, 255, 255, 0.5), inset -2px -2px 0px rgba(0, 0, 0, 0.5)',
-				'retro-button': '2px 2px 0px 0px #000000',
+				'retro': '0 0 10px rgba(139, 92, 246, 0.5)',
+				'retro-inset': 'inset 0 0 5px rgba(139, 92, 246, 0.5)',
+				'retro-button': '0 0 5px rgba(139, 92, 246, 0.7)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -92,6 +92,7 @@ export default {
 			animation: {
 				'scanline': 'scanline 10s linear infinite',
 				'blink': 'blink 1s steps(1) infinite',
+				'pulse-glow': 'pulse-glow 2s infinite',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -117,6 +118,14 @@ export default {
 				'blink': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0' },
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 5px rgba(139, 92, 246, 0.7), 0 0 10px rgba(139, 92, 246, 0.5)' 
+					},
+					'50%': { 
+						boxShadow: '0 0 15px rgba(139, 92, 246, 0.9), 0 0 20px rgba(139, 92, 246, 0.7)' 
+					},
 				}
 			}
 		}

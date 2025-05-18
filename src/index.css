@@ -1,5 +1,6 @@
 
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -79,6 +80,7 @@
 
   html, body {
     @apply font-mono bg-retro-background text-retro-foreground overflow-x-hidden min-h-screen;
+    background-image: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
   }
 
   /* Scanlines effect */
@@ -91,62 +93,147 @@
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.15),
-      rgba(0, 0, 0, 0.15) 1px,
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.1) 0px,
+      rgba(0, 0, 0, 0.1) 1px,
       transparent 1px,
       transparent 2px
     );
+    background-size: 100% 2px;
     opacity: 0.15;
     z-index: 100;
+  }
+
+  /* Glitch overlay */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    background-image: 
+      linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.05) 10%, transparent 20%);
+    animation: glitch 10s linear infinite;
+    z-index: 101;
+  }
+
+  @keyframes glitch {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
 }
 
 @layer components {
   .retro-container {
-    @apply border-4 border-retro-border bg-retro-background text-retro-foreground shadow-retro rounded-none p-4 md:p-6;
+    @apply border-2 border-retro-border bg-retro-background/90 text-retro-foreground shadow-retro backdrop-blur-sm rounded-md p-4 md:p-6;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .retro-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
   }
 
   .retro-window {
-    @apply border-4 border-retro-border bg-retro-background shadow-retro rounded-none p-4 flex flex-col;
+    @apply border-2 border-retro-border bg-retro-background/90 shadow-retro rounded-md p-4 flex flex-col backdrop-blur-sm relative;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3), inset 0 0 2px rgba(139, 92, 246, 0.5);
   }
 
   .retro-window-title {
-    @apply font-pixelated text-xl text-retro-primary p-2 bg-blue-950 mb-2 flex items-center justify-between;
+    @apply font-pixelated text-xl text-retro-primary p-2 bg-retro-background mb-2 flex items-center justify-between border-b border-retro-primary/30;
   }
 
   .retro-button {
-    @apply px-4 py-2 bg-blue-800 border-2 border-t-white border-l-white border-r-black border-b-black text-white
-    font-pixelated hover:bg-blue-700 active:border-t-black active:border-l-black active:border-r-white active:border-b-white
-    transition-all duration-100 focus:outline-none shadow-retro-button active:shadow-none active:translate-x-[2px] active:translate-y-[2px];
+    @apply px-4 py-2 bg-retro-background border-2 border-retro-primary text-retro-primary
+    font-pixelated hover:bg-retro-primary hover:text-retro-background
+    transition-all duration-200 focus:outline-none shadow-retro-button
+    rounded-md relative overflow-hidden;
+  }
+
+  .retro-button:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: btn-shine 1.5s infinite;
+  }
+
+  @keyframes btn-shine {
+    100% {
+      left: 100%;
+    }
   }
 
   .retro-input {
-    @apply border-2 border-black bg-blue-900 text-white px-3 py-2 font-mono shadow-retro-inset placeholder:text-blue-300;
+    @apply border-2 border-retro-primary/50 bg-retro-background text-retro-foreground px-3 py-2 font-mono shadow-retro-inset placeholder:text-retro-muted/50 rounded-md focus:border-retro-primary focus:outline-none;
   }
 
   .retro-card {
-    @apply border-2 border-t-white border-l-white border-r-black border-b-black bg-blue-800 p-2;
+    @apply border-2 border-retro-primary/50 bg-retro-background/80 p-3 rounded-md;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
   }
 
   .retro-select {
-    @apply border-2 border-black bg-blue-900 text-white py-1 px-2 font-pixelated appearance-none relative pr-8;
+    @apply border-2 border-retro-primary/50 bg-retro-background text-retro-foreground py-1 px-2 font-pixelated appearance-none relative pr-8 rounded-md;
   }
 
   .retro-table {
-    @apply w-full border-2 border-retro-border;
+    @apply w-full border-2 border-retro-border rounded-md overflow-hidden;
   }
 
   .retro-table th {
-    @apply bg-blue-950 text-retro-primary font-pixelated text-left p-2 border border-retro-border;
+    @apply bg-retro-background text-retro-primary font-pixelated text-left p-2 border border-retro-border/30;
   }
 
   .retro-table td {
-    @apply p-2 border border-retro-border;
+    @apply p-2 border border-retro-border/30;
   }
 
   .retro-table tr:nth-child(even) {
-    @apply bg-blue-800;
+    @apply bg-retro-background/50;
+  }
+
+  .retro-table tr:hover {
+    @apply bg-retro-primary/10;
+  }
+
+  .cyber-glow {
+    text-shadow: 0 0 5px rgba(139, 92, 246, 0.7), 0 0 10px rgba(139, 92, 246, 0.5);
+  }
+
+  .cyber-border {
+    @apply relative;
+  }
+  
+  .cyber-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    background: linear-gradient(90deg, #8B5CF6, #0EA5E9, #F97316, #8B5CF6) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    border-radius: 0.375rem;
+    pointer-events: none;
   }
 }
