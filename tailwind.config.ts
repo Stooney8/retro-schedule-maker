@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,12 +62,36 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Retro theme colors
+				retro: {
+					background: '#234975',
+					foreground: '#ffffff',
+					primary: '#33ff00',
+					secondary: '#0088ff',
+					accent: '#ff8800',
+					muted: '#cccccc',
+					border: '#00aaff',
+					shadow: '#000033',
 				}
+			},
+			fontFamily: {
+				pixelated: ['VT323', 'monospace'],
+				mono: ['Courier New', 'monospace'],
+			},
+			boxShadow: {
+				'retro': '4px 4px 0px 0px rgba(0, 0, 0, 0.5)',
+				'retro-inset': 'inset 2px 2px 0px rgba(255, 255, 255, 0.5), inset -2px -2px 0px rgba(0, 0, 0, 0.5)',
+				'retro-button': '2px 2px 0px 0px #000000',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			animation: {
+				'scanline': 'scanline 10s linear infinite',
+				'blink': 'blink 1s steps(1) infinite',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -84,11 +109,15 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'scanline': {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(100vh)' }
+				},
+				'blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' },
 				}
-			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},

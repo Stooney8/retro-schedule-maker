@@ -1,12 +1,46 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import RetroHeader from '@/components/RetroHeader';
+import FileUploader from '@/components/FileUploader';
+import ScheduleTable from '@/components/ScheduleTable';
+import RetroFooter from '@/components/RetroFooter';
+import Instructions from '@/components/Instructions';
+import { CourseSchedule } from '@/types/scheduleTypes';
 
 const Index = () => {
+  const [schedules, setSchedules] = useState<CourseSchedule[]>([]);
+
+  const handleScheduleLoaded = (loadedSchedules: CourseSchedule[]) => {
+    setSchedules(loadedSchedules);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="retro-app min-h-screen flex flex-col">
+      <RetroHeader />
+      
+      <main className="container mx-auto px-4 flex-grow">
+        <Instructions />
+        
+        <FileUploader onScheduleLoaded={handleScheduleLoaded} />
+        
+        {schedules.length > 0 ? (
+          <ScheduleTable schedules={schedules} />
+        ) : (
+          <div className="retro-window text-center py-10">
+            <div className="font-pixelated text-xl text-retro-primary mb-2">
+              NO DATA LOADED
+            </div>
+            <p className="text-retro-muted mb-4">
+              Please upload a schedule file to continue
+            </p>
+            <div className="text-xs text-retro-muted">
+              C:\&gt; <span className="animate-blink">_</span>
+            </div>
+          </div>
+        )}
+      </main>
+      
+      <RetroFooter />
     </div>
   );
 };
