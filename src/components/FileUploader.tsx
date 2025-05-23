@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { parseExcelFile } from '../utils/excelParser';
+import { generateExcelTemplate } from '../utils/templateGenerator';
 import { CourseSchedule } from '../types/scheduleTypes';
 import { toast } from "@/hooks/use-toast";
-import { File } from 'lucide-react';
+import { File, Download } from 'lucide-react';
 
 interface FileUploaderProps {
   onScheduleLoaded: (schedules: CourseSchedule[]) => void;
@@ -85,11 +85,44 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
     }
   };
 
+  const handleDownloadTemplate = () => {
+    try {
+      generateExcelTemplate();
+      toast({
+        title: "Template Downloaded",
+        description: "Excel template has been downloaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Error",
+        description: "Failed to download template. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="retro-window mb-6 max-w-2xl mx-auto">
       <div className="retro-window-title">
         <span>C:\UPLOAD\SCHEDULE.XLS</span>
         <span className="animate-blink">▎</span>
+      </div>
+      
+      {/* Template download section */}
+      <div className="mb-4 p-3 bg-retro-background/20 border border-retro-accent/30 rounded">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-pixelated text-retro-accent text-sm mb-1">TEMPLATE DOWNLOAD</h3>
+            <p className="text-xs text-retro-muted">Get the Excel template to see the required format</p>
+          </div>
+          <button
+            onClick={handleDownloadTemplate}
+            className="flex items-center px-3 py-2 bg-retro-accent text-retro-background font-mono text-xs hover:bg-retro-primary transition-colors border border-retro-accent hover:border-retro-primary"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            DOWNLOAD.XLSX
+          </button>
+        </div>
       </div>
       
       <div
