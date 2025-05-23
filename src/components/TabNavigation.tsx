@@ -9,8 +9,8 @@ interface TabNavigationProps {
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
-    { id: 'upload', label: 'FILE UPLOAD', icon: Upload },
     { id: 'schedule', label: 'SCHEDULE VIEWER', icon: Calendar },
+    { id: 'upload', label: 'FILE UPLOAD', icon: Upload },
     { id: 'system', label: 'SYSTEM INFO', icon: Info }
   ];
 

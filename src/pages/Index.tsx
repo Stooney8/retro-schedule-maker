@@ -11,7 +11,7 @@ import { CourseSchedule } from '@/types/scheduleTypes';
 
 const Index = () => {
   const [schedules, setSchedules] = useState<CourseSchedule[]>([]);
-  const [activeTab, setActiveTab] = useState('upload');
+  const [activeTab, setActiveTab] = useState('schedule');
 
   const handleScheduleLoaded = (loadedSchedules: CourseSchedule[]) => {
     setSchedules(loadedSchedules);

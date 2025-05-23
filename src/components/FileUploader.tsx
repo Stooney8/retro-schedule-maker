@@ -1,9 +1,20 @@
+
 import React, { useState } from 'react';
 import { parseExcelFile } from '../utils/excelParser';
 import { generateExcelTemplate } from '../utils/templateGenerator';
 import { CourseSchedule } from '../types/scheduleTypes';
 import { toast } from "@/hooks/use-toast";
 import { File, Download } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface FileUploaderProps {
   onScheduleLoaded: (schedules: CourseSchedule[]) => void;
@@ -13,6 +24,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -35,7 +48,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
     }
   };
 
-  const handleFiles = async (files: FileList) => {
+  const handleFiles = (files: FileList) => {
     const file = files[0];
     
     if (!file) return;
@@ -63,11 +76,20 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
       return;
     }
     
+    // Show confirmation dialog
+    setPendingFile(file);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmUpload = async () => {
+    if (!pendingFile) return;
+    
     setIsLoading(true);
-    setFileName(file.name);
+    setFileName(pendingFile.name);
+    setShowConfirmDialog(false);
     
     try {
-      const schedules = await parseExcelFile(file);
+      const schedules = await parseExcelFile(pendingFile);
       onScheduleLoaded(schedules);
       toast({
         title: "File Uploaded",
@@ -82,7 +104,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
       console.error('Error parsing file:', error);
     } finally {
       setIsLoading(false);
+      setPendingFile(null);
     }
+  };
+
+  const cancelUpload = () => {
+    setShowConfirmDialog(false);
+    setPendingFile(null);
   };
 
   const handleDownloadTemplate = () => {
@@ -102,71 +130,104 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onScheduleLoaded }) => {
   };
 
   return (
-    <div className="retro-window mb-6 max-w-2xl mx-auto">
-      <div className="retro-window-title">
-        <span>C:\UPLOAD\SCHEDULE.XLS</span>
-        <span className="animate-blink">▎</span>
-      </div>
-      
-      {/* Template download section */}
-      <div className="mb-4 p-3 bg-retro-background/20 border border-retro-accent/30 rounded">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-pixelated text-retro-accent text-sm mb-1">TEMPLATE DOWNLOAD</h3>
-            <p className="text-xs text-retro-muted">Get the Excel template to see the required format</p>
+    <>
+      <div className="retro-window mb-6 max-w-2xl mx-auto">
+        <div className="retro-window-title">
+          <span>C:\UPLOAD\SCHEDULE.XLS</span>
+          <span className="animate-blink">▎</span>
+        </div>
+        
+        {/* Template download section */}
+        <div className="mb-4 p-3 bg-retro-background/20 border border-retro-accent/30 rounded">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-pixelated text-retro-accent text-sm mb-1">TEMPLATE DOWNLOAD</h3>
+              <p className="text-xs text-retro-muted">Get the Excel template to see the required format</p>
+            </div>
+            <button
+              onClick={handleDownloadTemplate}
+              className="flex items-center px-3 py-2 bg-retro-accent text-retro-background font-mono text-xs hover:bg-retro-primary transition-colors border border-retro-accent hover:border-retro-primary"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              DOWNLOAD.XLSX
+            </button>
           </div>
-          <button
-            onClick={handleDownloadTemplate}
-            className="flex items-center px-3 py-2 bg-retro-accent text-retro-background font-mono text-xs hover:bg-retro-primary transition-colors border border-retro-accent hover:border-retro-primary"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            DOWNLOAD.XLSX
-          </button>
+        </div>
+        
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`border-2 border-dashed p-6 text-center cursor-pointer transition-colors
+                      ${isDragging ? 'border-retro-primary bg-blue-900' : 'border-retro-muted bg-blue-950'}`}
+        >
+          <input
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={handleFileChange}
+            id="file-input"
+            disabled={isLoading}
+          />
+          
+          <label htmlFor="file-input" className="cursor-pointer">
+            <div className="mx-auto mb-2 flex justify-center">
+              <File className="h-12 w-12 text-retro-muted" />
+            </div>
+            
+            {isLoading ? (
+              <div className="text-retro-muted">
+                <div className="font-pixelated text-lg">LOADING...</div>
+                <div className="mt-2 text-xs">PLEASE WAIT</div>
+              </div>
+            ) : (
+              <div className="text-retro-muted">
+                <div className="font-pixelated text-lg">
+                  {fileName ? fileName : 'DROP EXCEL FILE HERE'}
+                </div>
+                <div className="mt-2 text-xs">
+                  {fileName ? 'CLICK TO CHANGE FILE' : 'OR CLICK TO BROWSE'}
+                </div>
+                <div className="mt-4 text-retro-primary text-xs">
+                  SUPPORTED FORMATS: .XLSX, .XLS, .CSV
+                </div>
+              </div>
+            )}
+          </label>
         </div>
       </div>
-      
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`border-2 border-dashed p-6 text-center cursor-pointer transition-colors
-                    ${isDragging ? 'border-retro-primary bg-blue-900' : 'border-retro-muted bg-blue-950'}`}
-      >
-        <input
-          type="file"
-          accept=".xlsx,.xls,.csv"
-          className="hidden"
-          onChange={handleFileChange}
-          id="file-input"
-          disabled={isLoading}
-        />
-        
-        <label htmlFor="file-input" className="cursor-pointer">
-          <div className="mx-auto mb-2 flex justify-center">
-            <File className="h-12 w-12 text-retro-muted" />
-          </div>
-          
-          {isLoading ? (
-            <div className="text-retro-muted">
-              <div className="font-pixelated text-lg">LOADING...</div>
-              <div className="mt-2 text-xs">PLEASE WAIT</div>
-            </div>
-          ) : (
-            <div className="text-retro-muted">
-              <div className="font-pixelated text-lg">
-                {fileName ? fileName : 'DROP EXCEL FILE HERE'}
-              </div>
-              <div className="mt-2 text-xs">
-                {fileName ? 'CLICK TO CHANGE FILE' : 'OR CLICK TO BROWSE'}
-              </div>
-              <div className="mt-4 text-retro-primary text-xs">
-                SUPPORTED FORMATS: .XLSX, .XLS, .CSV
-              </div>
-            </div>
-          )}
-        </label>
-      </div>
-    </div>
+
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent className="retro-window border-retro-primary bg-retro-background">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-pixelated text-retro-primary">
+              CONFIRM FILE UPLOAD
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-retro-muted">
+              Are you sure you want to upload and process this file?
+              <br />
+              <span className="text-retro-accent font-mono">
+                {pendingFile?.name}
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              onClick={cancelUpload}
+              className="retro-button bg-retro-muted text-retro-background hover:bg-retro-muted/80"
+            >
+              CANCEL
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmUpload}
+              className="retro-button bg-retro-primary text-retro-background hover:bg-retro-primary/80"
+            >
+              UPLOAD FILE
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
