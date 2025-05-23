@@ -15,8 +15,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
   ];
 
   return (
-    <div className="retro-window mb-6">
-      <div className="retro-window-title">
+    <div className="retro-window mb-4">
+      <div className="retro-window-title text-lg">
         <span>CYBERSYNC NAVIGATION</span>
         <span className="animate-blink">▎</span>
       </div>
@@ -27,13 +27,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex-1 px-4 py-3 font-pixelated text-sm transition-all duration-200 flex items-center justify-center gap-2 border-r border-retro-primary/30 last:border-r-0 ${
+              className={`flex-1 px-2 py-2 font-pixelated text-xs transition-all duration-200 flex items-center justify-center gap-1 border-r border-retro-primary/30 last:border-r-0 ${
                 activeTab === tab.id
                   ? 'bg-retro-primary text-retro-background'
                   : 'bg-retro-background/50 text-retro-muted hover:bg-retro-primary/20 hover:text-retro-primary'
               }`}
             >
-              <IconComponent className="w-4 h-4" />
+              <IconComponent className="w-3 h-3" />
               {tab.label}
             </button>
           );
